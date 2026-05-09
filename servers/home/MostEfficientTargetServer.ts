@@ -12,8 +12,8 @@ export function getMostEfficientTargetServer(ns: NS) {
 		.filter((server) => server.moneyMax)
 		.filter((server) => server.moneyMax > 0);
 	possibleTargets.sort((serverA, serverB) => {
-		const efficiencyA = serverA.moneyMax / serverA.minDifficulty;
-		const efficiencyB = serverB.moneyMax / serverB.minDifficulty;
+		const efficiencyA = serverA.moneyMax / serverA.minDifficulty ** 2;
+		const efficiencyB = serverB.moneyMax / serverB.minDifficulty ** 2;
 		return efficiencyB - efficiencyA;
 	});
 
