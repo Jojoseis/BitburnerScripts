@@ -21,8 +21,11 @@ export async function main(ns: NS) {
 		}
 
 		const newRam = lowestRamServer.maxRam * 2;
-		if (ns.getServerMoneyAvailable("home") >= ns.cloud.getServerUpgradeCost(lowestRamServer.hostname, newRam)) {
+		const upgradeCost = ns.cloud.getServerUpgradeCost(lowestRamServer.hostname, newRam);
+		if (ns.getServerMoneyAvailable("home") >= upgradeCost * 2) {
+			// Keep a buffer of funds
 			ns.cloud.upgradeServer(lowestRamServer.hostname, newRam);
+			ns.run("OptimizeCloudUsage.ts");
 		} else {
 			await ns.sleep(BUY_SLEEP_TIME);
 		}

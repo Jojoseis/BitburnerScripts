@@ -13,6 +13,7 @@ export async function main(ns: NS) {
 		if (ns.getServerMoneyAvailable("home") >= serverCost) {
 			const newServerName = `${DEFAULT_SERVER_NAME}-${serverNames.length + 1}`;
 			cloud.purchaseServer(newServerName, ram);
+			ns.run("OptimizeCloudUsage.ts");
 		} else {
 			await ns.sleep(BUY_SLEEP_TIME);
 		}

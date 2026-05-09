@@ -4,8 +4,11 @@ export function main(ns: NS) {
 	const [overrideRunningScripts] = ns.args;
 	const targetServer = getMostEfficientTargetServer(ns);
 
-	ns.alert(
-		`Most efficient target server is ${targetServer.hostname} with max money of ${targetServer.moneyMax.toExponential()} & min difficulty of ${targetServer.minDifficulty}. Starting BaseHack on all cloud servers...`,
+	ns.printf(
+		"Most efficient target server is %s with max money of %s & min difficulty of %s. Starting BaseHack on all cloud servers...",
+		targetServer.hostname,
+		targetServer.moneyMax.toExponential(),
+		targetServer.minDifficulty,
 	);
 
 	for (const cloudServer of ns.cloud.getServerNames()) {
