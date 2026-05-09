@@ -7,10 +7,10 @@ export function getMostEfficientTargetServer(ns: NS) {
 
 	const clearNetServers = outsideServers.filter((server) => "minDifficulty" in server && "moneyMax" in server) as Array<Required<Server>>;
 
+	const currentHackingLevel = ns.getHackingLevel();
 	const possibleTargets = clearNetServers
-		.filter((server) => server.minDifficulty)
-		.filter((server) => server.moneyMax)
-		.filter((server) => server.moneyMax > 0);
+		.filter((server) => server.moneyMax > 0)
+		.filter((server) => server.requiredHackingSkill <= currentHackingLevel);
 	possibleTargets.sort((serverA, serverB) => {
 		const efficiencyA = serverA.moneyMax / serverA.minDifficulty ** 2;
 		const efficiencyB = serverB.moneyMax / serverB.minDifficulty ** 2;
