@@ -1,10 +1,9 @@
-
 export type ServerData = Record<
 	string,
 	| Server
 	| (DarknetServerData & {
-		isOnline: boolean;
-	})
+			isOnline: boolean;
+	  })
 >;
 
 export function getControlledServerData(ns: NS) {

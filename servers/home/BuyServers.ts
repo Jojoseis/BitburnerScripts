@@ -1,6 +1,7 @@
+export const BUY_SLEEP_TIME = 100;
+const DEFAULT_SERVER_NAME = "cloud-server";
+
 export async function main(ns: NS) {
-	const SLEEP_TIME = 100;
-	const defaultServerName = "cloud-server";
 	const cloud = ns.cloud;
 
 	let serverNames: Array<string> = [];
@@ -10,12 +11,13 @@ export async function main(ns: NS) {
 		const ram = 8;
 		const serverCost = cloud.getServerCost(ram);
 		if (ns.getServerMoneyAvailable("home") >= serverCost) {
-			const newServerName = `${defaultServerName}-${serverNames.length + 1}`;
+			const newServerName = `${DEFAULT_SERVER_NAME}-${serverNames.length + 1}`;
 			cloud.purchaseServer(newServerName, ram);
 		} else {
-			await ns.sleep(SLEEP_TIME);
+			await ns.sleep(BUY_SLEEP_TIME);
 		}
 	}
 
-	ns.alert("All cloud servers purchased!");
+	ns.alert("All cloud servers purchased! Upgrading servers next.");
+	ns.spawn("UpgradeServers.ts", { spawnDelay: 0 });
 }
