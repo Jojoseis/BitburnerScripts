@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"allowImportingTsExtensions": true,
+		"target": "ESNext",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"jsx": "react",
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"paths": {
+			"@/*": ["./*"],
+			"NetscriptDefinitions": ["./NetscriptDefinitions.d.ts"]
+		},
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"forceConsistentCasingInFileNames": true
+	}
+}
