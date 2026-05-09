@@ -13,13 +13,13 @@ export async function main(ns: NS) {
 		const currentSecurity = ns.getServerSecurityLevel(targetServer);
 		const currentMoney = ns.getServerMoneyAvailable(targetServer);
 		if (currentSecurity > minSecurity) {
-			console.log("Current security level of %s is above min %s. Weakening...", currentSecurity, minSecurity);
+			ns.printf("Current security level of %s is above min %s. Weakening...", currentSecurity, minSecurity);
 			await ns.weaken(targetServer);
 		} else if (currentMoney < maxMoney) {
-			console.log("Current money level of %s is below max %s. Growing...", currentMoney, maxMoney);
+			ns.printf("Current money level of %s is below max %s. Growing...", currentMoney, maxMoney);
 			await ns.grow(targetServer);
 		} else {
-			console.log("Current money level of %s is at max. Hacking...", currentMoney);
+			ns.printf("Current money level of %s is at max. Hacking...", currentMoney);
 			await ns.hack(targetServer);
 		}
 	}
