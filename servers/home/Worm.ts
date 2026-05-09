@@ -30,15 +30,15 @@ function recursiveScanAndControl(ns: NS, server: string | undefined, targetedSer
 		}
 
 		if (rootAccess) {
+			ns.scp("BaseHack.ts", connectedServer, "home");
 			if (overrideScripts) {
-				ns.scp("BaseHack.ts", connectedServer, "home");
 				ns.scriptKill("BaseHack.ts", connectedServer);
 			}
 
 			const hackRamUsage = ns.getScriptRam("BaseHack.ts", connectedServer);
 			const availableServerRam = serverInfo.maxRam - ns.getServerUsedRam(connectedServer);
 			const threads = Math.floor(availableServerRam / hackRamUsage);
-			if (threads > 0) {
+			if (threads > 0 && ns.getServerRequiredHackingLevel(connectedServer) <= ns.getHackingLevel()) {
 				ns.exec("BaseHack.ts", connectedServer, { threads: threads }, connectedServer);
 			}
 
