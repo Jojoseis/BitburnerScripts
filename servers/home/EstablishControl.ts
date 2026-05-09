@@ -14,5 +14,13 @@ export function establishControl(ns: NS, targetServer: string): boolean {
 		ns.brutessh(targetServer);
 	}
 
+	if (ns.fileExists("FTPCrack.exe", "home")) {
+		ns.ftpcrack(targetServer);
+	}
+
+	if (ns.fileExists("relaySMTP.exe", "home")) {
+		ns.relaysmtp(targetServer);
+	}
+
 	return ns.nuke(targetServer);
 }
