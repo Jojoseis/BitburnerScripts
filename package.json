@@ -1,22 +1,11 @@
 {
-	"name": "bb-external-editor",
-	"version": "1.1.0",
-	"description": "template for external editors for the game bitburner",
+	"name": "bitburner-scripts",
+	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
 		"start": "node ./config.mjs",
 		"lint": "biome format --write && biome lint --write"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/shyguy1412/bb-external-editor.git"
-	},
-	"author": "Shy",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/shyguy1412/bb-external-editor/issues"
-	},
-	"homepage": "https://github.com/shyguy1412/bb-external-editor#readme",
 	"dependencies": {
 		"@types/react": "^18.3.4",
 		"@types/react-dom": "^18.3.0",
