@@ -1,5 +1,6 @@
 export const BUY_SLEEP_TIME = 100;
 const DEFAULT_SERVER_NAME = "cloud-server";
+const FUND_BUFFER_MULTIPLIER = 1;
 
 export async function main(ns: NS) {
 	const cloud = ns.cloud;
@@ -10,7 +11,7 @@ export async function main(ns: NS) {
 	while ((serverNames = cloud.getServerNames()).length < cloud.getServerLimit()) {
 		const ram = 8;
 		const serverCost = cloud.getServerCost(ram);
-		if (ns.getServerMoneyAvailable("home") >= serverCost) {
+		if (ns.getServerMoneyAvailable("home") >= serverCost * (FUND_BUFFER_MULTIPLIER + 1)) {
 			const newServerName = `${DEFAULT_SERVER_NAME}-${serverNames.length + 1}`;
 			cloud.purchaseServer(newServerName, ram);
 			ns.run("OptimizeCloudUsage.ts");
