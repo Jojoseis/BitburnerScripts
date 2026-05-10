@@ -22,5 +22,13 @@ export function establishControl(ns: NS, targetServer: string): boolean {
 		ns.relaysmtp(targetServer);
 	}
 
+	if (ns.fileExists("HTTPWorm.exe")) {
+		ns.httpworm(targetServer);
+	}
+
+	if (ns.fileExists("SQLInject.exe")) {
+		ns.sqlinject(targetServer);
+	}
+
 	return ns.nuke(targetServer);
 }
