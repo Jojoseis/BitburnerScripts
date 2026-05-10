@@ -2,6 +2,7 @@ import { BUY_SLEEP_TIME } from "./BuyServers";
 import { getCloudServerData } from "./CloudServerData";
 
 const MAX_RAM = 1048576; // 2 ^ 20
+const FUND_BUFFER_MULTIPLIER = 5;
 
 export async function main(ns: NS) {
 	while (true) {
@@ -22,8 +23,7 @@ export async function main(ns: NS) {
 
 		const newRam = lowestRamServer.maxRam * 2;
 		const upgradeCost = ns.cloud.getServerUpgradeCost(lowestRamServer.hostname, newRam);
-		if (ns.getServerMoneyAvailable("home") >= upgradeCost * 2) {
-			// Keep a buffer of funds
+		if (ns.getServerMoneyAvailable("home") >= upgradeCost * (FUND_BUFFER_MULTIPLIER + 1)) {
 			ns.cloud.upgradeServer(lowestRamServer.hostname, newRam);
 			ns.run("OptimizeCloudUsage.ts");
 		} else {
