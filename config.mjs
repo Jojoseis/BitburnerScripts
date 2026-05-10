@@ -12,15 +12,12 @@ const createContext = async () =>
 				mirror: {
 					servers: "home",
 				},
-				distribute: {
-					"servers/home": "home",
-				},
 				pushOnConnect: true,
 			}),
 		],
 		bundle: false,
 		format: "esm",
-		platform: "browser",
+		platform: "node",
 		logLevel: "debug",
 	});
 
