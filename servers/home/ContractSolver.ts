@@ -115,7 +115,68 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Total Ways to Sum"(data: number): number {
-		return 2 ** (data - 2);
+		/**
+		 * Idea:
+		 * - iterate for each 1 to X
+		 * - for every iteration n:
+		 *  - a new entry with '<n-1> + 1' is added
+		 * 	- every previous sum chain will be kept, with a '+1' added at the end
+		 * 	- the last two entries '... + m + n' of a chain determine if they are able to produce more then then their '+1' offspring version in the future:
+		 * 		1. when m > n:
+		 * 			- then the offsprings are '... + m + n + 1' AND '... + m + <n+1>'
+		 * 		2. when m,n > 1 & m = n
+		 * 			- then the offspring is '... + m + n + 1' -> which means it will match case 1. on the next iteration
+		 * 		3. when m = 1 & n = 1
+		 * 			- the chain will just have '+ 1' added on every future generation and doesn't have to be tracked
+		 * 	- as a result, sum chain count for the next iteration is the sum of
+		 * 		- the previous iteration sum chain count
+		 * 		- 1 (for newly created '<n-1> + 1' sum chain)
+		 * 		- the amount of chains from the previous iteration that match case 1.
+		 * 	- then update the sum chain endings that match case 1. or 2. for the next generation
+		 *
+		 * //TODO: determine if there is an even faster algorithm to determine the amount of sum chains that are capable of reproduction
+		 */
+		let currentWayCount = 0;
+
+		// sum chains that match case 1. will create extra sum chains on the next iteration
+		let reproducingSumChainEndings: Array<[number, number]> = [];
+		// sum chains that match case 2. will create extra sum chains in two iterations
+		let reproductionCapableSumChainEndings: Array<number> = [];
+
+		for (let index = 2; index <= data; index++) {
+			currentWayCount = currentWayCount + 1 + reproducingSumChainEndings.length;
+
+			const newReproducingSumChainEndings: Array<[number, number]> = [];
+			const newReproductionCapableSumChainEndings: Array<number> = [];
+
+			for (const [secondToLast, last] of reproducingSumChainEndings) {
+				// this iteration is '... + secondToLast + last + 1' & '... + secondToLast + <last+1>'
+				const newSumChainEndings: Array<[number, number]> = [
+					[last, 1],
+					[secondToLast, last + 1],
+				];
+				for (const [newSecondToLast, newLast] of newSumChainEndings) {
+					if (newSecondToLast > newLast) {
+						newReproducingSumChainEndings.push([newSecondToLast, newLast]);
+					} else if (newSecondToLast > 1 && newLast > 1 && newSecondToLast === newLast) {
+						newReproductionCapableSumChainEndings.push(newLast);
+					}
+				}
+			}
+
+			for (const last of reproductionCapableSumChainEndings) {
+				newReproducingSumChainEndings.push([last, 1]);
+			}
+
+			if (index - 1 > 1) {
+				newReproducingSumChainEndings.push([index - 1, 1]);
+			}
+
+			reproducingSumChainEndings = newReproducingSumChainEndings;
+			reproductionCapableSumChainEndings = newReproductionCapableSumChainEndings;
+		}
+
+		return currentWayCount;
 	}
 
 	public "Total Ways to Sum II"(data: [number, Array<number>]): number {
@@ -222,7 +283,29 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Encryption I: Caesar Cipher"(data: [string, number]): string {
-		throw new UnimplementedSolutionError();
+		const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		const alphabetLength = alphabet.length;
+		const charsToIgnore = [" "];
+
+		const [input, offset] = data;
+		const positiveOffset = (alphabetLength - (offset % alphabetLength)) % alphabetLength;
+
+		return input
+			.split("")
+			.map((char) => {
+				if (charsToIgnore.includes(char)) {
+					return char;
+				}
+
+				const alphabetIndex = alphabet.indexOf(char);
+
+				if (alphabetIndex < 0) {
+					throw new Error(`Invalid character '${char}'.`);
+				}
+
+				return alphabet.charAt((alphabetIndex + positiveOffset) % alphabetLength);
+			})
+			.join("");
 	}
 
 	public "Encryption II: Vigenère Cipher"(data: [string, string]): string {
