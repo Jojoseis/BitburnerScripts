@@ -15,12 +15,17 @@ export function main(ns: NS) {
 		if (overrideRunningScripts === "true") {
 			ns.killall(cloudServer);
 		}
-		ns.scp("BaseHack.ts", cloudServer, "home");
-		const hackRamUsage = ns.getScriptRam("BaseHack.ts", cloudServer);
-		const availableServerRam = ns.getServerMaxRam(cloudServer) - ns.getServerUsedRam(cloudServer);
-		const threadCount = Math.floor(availableServerRam / hackRamUsage);
-		if (threadCount > 0) {
-			ns.exec("BaseHack.ts", cloudServer, { threads: threadCount }, targetServer.hostname);
+
+		if (cloudServer.endsWith("-23") || cloudServer.endsWith("-24") || cloudServer.endsWith("-25")) {
+			ns.exec("AutoShareRAM.ts", "home", 1, cloudServer);
+		} else {
+			ns.scp("BaseHack.ts", cloudServer, "home");
+			const hackRamUsage = ns.getScriptRam("BaseHack.ts", cloudServer);
+			const availableServerRam = ns.getServerMaxRam(cloudServer) - ns.getServerUsedRam(cloudServer);
+			const threadCount = Math.floor(availableServerRam / hackRamUsage);
+			if (threadCount > 0) {
+				ns.exec("BaseHack.ts", cloudServer, { threads: threadCount }, targetServer.hostname);
+			}
 		}
 	}
 }
