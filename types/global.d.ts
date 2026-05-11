@@ -4,6 +4,7 @@ import type {
 	DarknetServerData as _DarknetServerData,
 	NS as _NS,
 	Server as _Server,
+	Stock as _Stock,
 } from "NetscriptDefinitions";
 
 declare global {
@@ -12,4 +13,5 @@ declare global {
 	type DarknetServerData = _DarknetServerData;
 	type NS = _NS;
 	type Server = _Server;
+	type Stock = _Stock;
 }
