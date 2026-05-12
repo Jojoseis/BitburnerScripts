@@ -18,8 +18,10 @@ export async function main(ns: NS) {
 		const contract = findContract(ns);
 		if (contract) {
 			try {
+				const startTimeStamp = Date.now();
 				const reward = solveContract(contract);
-				ns.tprint(`Submitted solution for contract. Reward: ${reward}`);
+
+				ns.tprint(`Solved contract after ${Date.now() - startTimeStamp}ms. Reward: ${reward}`);
 			} catch (error) {
 				if (error instanceof ContractHandlerError) {
 					const message = (error as Error).message;
@@ -30,9 +32,8 @@ export async function main(ns: NS) {
 					throw error;
 				}
 			}
-		} else {
-			await ns.sleep(CONTRACT_SLEEP_TIME);
 		}
+		await ns.sleep(CONTRACT_SLEEP_TIME);
 	}
 }
 
