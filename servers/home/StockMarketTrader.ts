@@ -132,19 +132,29 @@ class StockMarketTrader {
 	#buyLongPosition(stockData: StockData) {
 		const availableShares = stockData.maxShares - stockData.longShares;
 		const maxPurchaseCost = this.#api.getPurchaseCost(stockData.symbol, availableShares, PositionType.LONG);
-		const sharesToBuy = availableShares * ((this.#ns.getServerMoneyAvailable("home") - StockMarketTrader.#FUND_BUFFER) / maxPurchaseCost);
 
-		const boughtShares = this.#api.buyStock(stockData.symbol, sharesToBuy);
-		stockData.longShares = boughtShares;
-
-		const indexOfPosition = this.#currentPositions.findIndex((data) => data.symbol === stockData.symbol);
-		if (indexOfPosition === -1) {
-			this.#currentPositions.unshift(stockData);
-			this.#currentPositions.sort((stockDataA, stockDataB) => this.#getStockRank(stockDataA.symbol) - this.#getStockRank(stockDataB.symbol));
+		let sharesToBuy = availableShares;
+		if (this.#ns.getServerMoneyAvailable("home") - StockMarketTrader.#FUND_BUFFER < maxPurchaseCost) {
+			sharesToBuy = availableShares * ((this.#ns.getServerMoneyAvailable("home") - StockMarketTrader.#FUND_BUFFER) / maxPurchaseCost);
 		}
 
-		if (boughtShares > 0) {
-			this.#ns.printf(`Bought ${boughtShares} shares of stock: ${stockData.symbol}.`);
+		if (sharesToBuy > 0) {
+			this.#ns.printf(`[DEBUG] Attempting to buy ${sharesToBuy} of stock: ${stockData.symbol}.`);
+
+			const boughtShares = this.#api.buyStock(stockData.symbol, sharesToBuy);
+			stockData.longShares = boughtShares;
+
+			const indexOfPosition = this.#currentPositions.findIndex((data) => data.symbol === stockData.symbol);
+			if (indexOfPosition === -1) {
+				this.#currentPositions.unshift(stockData);
+				this.#currentPositions.sort(
+					(stockDataA, stockDataB) => this.#getStockRank(stockDataA.symbol) - this.#getStockRank(stockDataB.symbol),
+				);
+			}
+
+			if (boughtShares > 0) {
+				this.#ns.printf(`Bought ${boughtShares} shares of stock: ${stockData.symbol}.`);
+			}
 		}
 	}
 
