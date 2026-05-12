@@ -41,20 +41,24 @@ export default class ContractSolver implements ContractSolvers {
 		return maxPrimeFactor;
 	}
 
-	#findFactor(data: number): number | false {
+	#findFactor(n: number, c = 1): number | false {
 		let x = 2;
+
 		let y = x;
 		let d = 1;
 
-		const g = (x: number) => (x ** 2 + 1) % data;
+		const g = (x: number) => (x ** 2 + c) % n;
 
 		while (d === 1) {
 			x = g(x);
 			y = g(g(y));
-			d = this.#greatestCommonDivisor(Math.abs(x - y), data);
+			d = this.#greatestCommonDivisor(Math.abs(x - y), n);
 		}
 
-		if (d === data) {
+		if (d === n) {
+			if (c + 1 < d) {
+				return this.#findFactor(n, c + 1);
+			}
 			return false;
 		}
 
