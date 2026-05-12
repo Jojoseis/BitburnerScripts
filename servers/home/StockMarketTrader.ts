@@ -140,6 +140,7 @@ class StockMarketTrader {
 		const indexOfPosition = this.#currentPositions.findIndex((data) => data.symbol === stockData.symbol);
 		if (indexOfPosition === -1) {
 			this.#currentPositions.unshift(stockData);
+			this.#currentPositions.sort((stockDataA, stockDataB) => this.#getStockRank(stockDataA.symbol) - this.#getStockRank(stockDataB.symbol));
 		}
 
 		if (boughtShares > 0) {
