@@ -57,11 +57,12 @@ class StockMarketTrader {
 	public async trade(): Promise<void> {
 		this.#stockData = this.#dataHandler.getAllStockData();
 
-		this.#ns.printf(`Top 3 stocks: ${this.#stockData[0].symbol}, ${this.#stockData[1].symbol}, ${this.#stockData[2].symbol}.`);
+		const longStocks = this.#stockData.filter((stock) => stock.type === PositionType.LONG);
+		this.#ns.printf(`Top 3 long stocks: ${longStocks[0]?.symbol}, ${longStocks[1]?.symbol}, ${longStocks[2]?.symbol}.`);
 
 		this.#currentPositions = this.#resolveExistingPositions();
 
-		this.#stockData.forEach(this.#optimizeStock, this);
+		this.#optimizeStock();
 	}
 
 	#resolveExistingPositions() {
@@ -82,28 +83,35 @@ class StockMarketTrader {
 		return currentPositions;
 	}
 
-	#optimizeStock(stockData: StockData, rank: number): void {
-		if (stockData.type === PositionType.LONG) {
-			const availableShares = stockData.maxShares - stockData.longShares;
-			const maxPurchaseCost = this.#api.getPurchaseCost(stockData.symbol, availableShares, PositionType.LONG);
+	#optimizeStock(): void {
+		for (const stockData of this.#stockData) {
+			const currentRank = this.#getStockRank(stockData.symbol);
 
-			// TODO: profitability calculation based on market fees & spread
+			if (stockData.type === PositionType.LONG) {
+				const availableShares = stockData.maxShares - stockData.longShares;
+				const maxPurchaseCost = this.#api.getPurchaseCost(stockData.symbol, availableShares, PositionType.LONG);
 
-			while (this.#hasEnoughMoneyFor(maxPurchaseCost) && this.#currentPositions.length > 0) {
-				const leastProfitablePosition = this.#currentPositions[this.#currentPositions.length - 1];
+				// TODO: profitability calculation based on market fees & spread
 
-				const rankOfLeastProfitablePosition = this.#stockData.findIndex((data) => data.symbol === leastProfitablePosition.symbol);
-				if (rankOfLeastProfitablePosition <= rank) {
-					break; // no less profitable positions left to sell
+				while (this.#hasEnoughMoneyFor(maxPurchaseCost) && this.#currentPositions.length > 0) {
+					const leastProfitablePosition = this.#currentPositions[this.#currentPositions.length - 1];
+
+					if (this.#getStockRank(leastProfitablePosition.symbol) <= currentRank) {
+						break; // no less profitable positions left to sell
+					}
+
+					this.#sellLongPosition(leastProfitablePosition);
 				}
 
-				this.#sellLongPosition(leastProfitablePosition);
+				this.#buyLongPosition(stockData);
+			} else if (this.#isShortingEnabled()) {
+				// TODO
 			}
-
-			this.#buyLongPosition(stockData);
-		} else if (this.#isShortingEnabled()) {
-			// TODO
 		}
+	}
+
+	#getStockRank(symbol: string): number {
+		return this.#stockData.findIndex((data) => data.symbol === symbol);
 	}
 
 	#hasEnoughMoneyFor(money: number): boolean {
@@ -131,7 +139,7 @@ class StockMarketTrader {
 
 		const indexOfPosition = this.#currentPositions.findIndex((data) => data.symbol === stockData.symbol);
 		if (indexOfPosition === -1) {
-			this.#currentPositions.push(stockData);
+			this.#currentPositions.unshift(stockData);
 		}
 
 		if (boughtShares > 0) {
