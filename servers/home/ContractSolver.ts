@@ -55,8 +55,9 @@ export default class ContractSolver implements ContractSolvers {
 			d = this.#greatestCommonDivisor(Math.abs(x - y), n);
 		}
 
+		const MAX_C = 1000;
 		if (d === n) {
-			if (c + 1 < d) {
+			if (c + 1 < d && c < MAX_C) {
 				return this.#findFactor(n, c + 1);
 			}
 			return false;
@@ -93,7 +94,7 @@ export default class ContractSolver implements ContractSolvers {
 
 		const possibleIndexes = this.#getIndexesOfPositiveNumbers(condensedData);
 
-		let maxSubarraySum = 0;
+		let maxSubarraySum = Math.max(...data); // using the largest number as a starting point
 		for (const possibleStartIndex of possibleIndexes) {
 			for (const possibleEndIndex of possibleIndexes.filter((index) => index >= possibleStartIndex)) {
 				const subarraySum = condensedData.slice(possibleStartIndex, possibleEndIndex + 1).reduce((sum, number) => sum + number, 0);
