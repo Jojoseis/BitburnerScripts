@@ -139,8 +139,6 @@ class StockMarketTrader {
 		}
 
 		if (sharesToBuy > 0) {
-			this.#ns.printf(`[DEBUG] Attempting to buy ${sharesToBuy} of stock: ${stockData.symbol}.`);
-
 			const boughtShares = this.#api.buyStock(stockData.symbol, sharesToBuy);
 			stockData.longShares = boughtShares;
 

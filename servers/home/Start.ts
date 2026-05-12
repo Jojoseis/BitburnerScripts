@@ -1,4 +1,4 @@
-const SLEEP_DELAY = 1000;
+const SLEEP_DELAY = 10000;
 
 enum ScriptSpecialConfig {
 	RUN_ONCE,
