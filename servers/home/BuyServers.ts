@@ -3,10 +3,11 @@ const DEFAULT_SERVER_NAME = "cloud-server";
 const FUND_BUFFER_MULTIPLIER = 1;
 
 export async function main(ns: NS) {
+	ns.run("OptimizeCloudUsage.ts");
+
 	const cloud = ns.cloud;
 
 	let serverNames: Array<string> = [];
-
 	// biome-ignore lint/suspicious/noAssignInExpressions: RAM optimization to avoid re-calling cloud.getServerNames()
 	while ((serverNames = cloud.getServerNames()).length < cloud.getServerLimit()) {
 		const ram = 8;

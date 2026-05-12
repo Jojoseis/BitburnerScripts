@@ -5,6 +5,8 @@ const MAX_RAM = 1048576; // 2 ^ 20
 const FUND_BUFFER_MULTIPLIER = 5;
 
 export async function main(ns: NS) {
+	ns.run("OptimizeCloudUsage.ts");
+
 	while (true) {
 		const cloudServers = getCloudServerData(ns);
 
