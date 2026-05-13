@@ -226,6 +226,8 @@ class StockMarketDataHandler {
 }
 
 class StockMarketStatusHandler {
+	static readonly #TOP_STOCK_COUNT = 3;
+
 	readonly #ns;
 
 	readonly #lastStatus: Status = {
@@ -241,11 +243,11 @@ class StockMarketStatusHandler {
 		const topLongStocks = stockData
 			.filter((stock) => stock.type === PositionType.LONG)
 			.map((stock) => stock.symbol)
-			.slice(0, 2);
+			.slice(0, StockMarketStatusHandler.#TOP_STOCK_COUNT);
 
 		if (topLongStocks.join(",") !== this.#lastStatus.topLongStocks.join(",")) {
 			this.#lastStatus.topLongStocks = topLongStocks;
-			this.#ns.printf(`Top 3 long stocks: ${topLongStocks[0]}, ${topLongStocks[1]}, ${topLongStocks[2]}.`);
+			this.#ns.printf(`Top long stocks: ${topLongStocks.join(", ")}.`);
 		}
 
 		const topMarketCapStock = stockData.reduce((prev, curr) => {
