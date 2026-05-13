@@ -7,7 +7,7 @@ export function main(ns: NS) {
 	ns.printf(
 		"Most efficient target server is %s with max money of %s & min difficulty of %s. Starting BaseHack on all cloud servers...",
 		targetServer.hostname,
-		targetServer.moneyMax.toExponential(),
+		ns.format.number(targetServer.moneyMax),
 		targetServer.minDifficulty,
 	);
 

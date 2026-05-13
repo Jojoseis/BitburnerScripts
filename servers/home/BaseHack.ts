@@ -16,10 +16,10 @@ export async function main(ns: NS) {
 			ns.printf("Current security level of %s is above min %s. Weakening...", currentSecurity, minSecurity);
 			await ns.weaken(targetServer);
 		} else if (currentMoney < maxMoney) {
-			ns.printf("Current money level of %s is below max %s. Growing...", currentMoney, maxMoney);
+			ns.printf("Current money level of %s is below max %s. Growing...", ns.format.number(currentMoney), ns.format.number(maxMoney));
 			await ns.grow(targetServer);
 		} else {
-			ns.printf("Current money level of %s is at max. Hacking...", currentMoney);
+			ns.printf("Current money level of %s is at max. Hacking...", ns.format.number(currentMoney));
 			await ns.hack(targetServer);
 		}
 	}
