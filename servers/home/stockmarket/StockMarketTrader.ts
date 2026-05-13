@@ -21,9 +21,7 @@ class StockMarketTrader {
 	readonly #ns;
 	readonly #api;
 
-	// TODO: simplify logic by unifying both arrays
 	#stockData: Array<StockData> = [];
-	#currentPositions: Array<StockData> = [];
 
 	constructor(ns: NS) {
 		this.#dataHandler = new StockMarketDataHandler(ns);
@@ -37,8 +35,7 @@ class StockMarketTrader {
 		this.#stockData = this.#dataHandler.getAllStockData();
 		this.#statusHandler.updateWith(this.#stockData);
 
-		this.#currentPositions = this.#resolveExistingPositions();
-
+		this.#resolveExistingPositions();
 		this.#optimizeStock();
 	}
 
@@ -73,14 +70,14 @@ class StockMarketTrader {
 
 			// TODO: profitability calculation based on market fees & spread
 
-			while (this.#hasEnoughMoneyFor(maxPurchaseCost) && this.#currentPositions.length > 0) {
-				const leastProfitablePosition = this.#currentPositions[this.#currentPositions.length - 1];
+			while (this.#hasEnoughMoneyFor(maxPurchaseCost)) {
+				const leastProfitablePositionIndex = this.#stockData.findLastIndex((stock) => stock.longShares > 0);
 
-				if (this.#getStockRank(leastProfitablePosition.symbol) <= currentRank) {
+				if (currentRank >= leastProfitablePositionIndex) {
 					break; // no less profitable positions left to sell
 				}
 
-				this.#sellLongPosition(leastProfitablePosition);
+				this.#sellLongPosition(this.#stockData[leastProfitablePositionIndex]);
 			}
 
 			this.#buyLongPosition(stockData);
@@ -100,9 +97,6 @@ class StockMarketTrader {
 		const soldShares = this.#api.sellStock(stockData.symbol, stockData.longShares);
 		stockData.longShares = 0;
 
-		const indexOfPosition = this.#currentPositions.findIndex((position) => position.symbol === stockData.symbol);
-		this.#currentPositions.splice(indexOfPosition, 1);
-
 		this.#ns.printf(`Sold ${soldShares} shares of stock: ${stockData.symbol}.`);
 	}
 
@@ -118,14 +112,6 @@ class StockMarketTrader {
 		if (sharesToBuy > 0) {
 			const boughtShares = this.#api.buyStock(stockData.symbol, sharesToBuy);
 			stockData.longShares = boughtShares;
-
-			const indexOfPosition = this.#currentPositions.findIndex((data) => data.symbol === stockData.symbol);
-			if (indexOfPosition === -1) {
-				this.#currentPositions.unshift(stockData);
-				this.#currentPositions.sort(
-					(stockDataA, stockDataB) => this.#getStockRank(stockDataA.symbol) - this.#getStockRank(stockDataB.symbol),
-				);
-			}
 
 			if (boughtShares > 0) {
 				this.#ns.printf(`Bought ${boughtShares} shares of stock: ${stockData.symbol}.`);
