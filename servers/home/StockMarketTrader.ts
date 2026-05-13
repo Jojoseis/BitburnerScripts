@@ -18,6 +18,12 @@ type StockKeyData = {
 	price: number;
 };
 
+type Status = {
+	topLongStocks: Array<string>;
+	// TODO: topShortStocks: Array<string>;
+	topMarketCapStock: string;
+};
+
 enum PositionType {
 	LONG = "L",
 	SHORT = "S",
@@ -37,6 +43,7 @@ class StockMarketTrader {
 	static readonly #FUND_BUFFER = 10_000_000_000;
 
 	readonly #dataHandler;
+	readonly #statusHandler: StockMarketStatusHandler;
 
 	readonly #ns;
 	readonly #api;
@@ -46,8 +53,9 @@ class StockMarketTrader {
 	#stockData: Array<StockData> = [];
 	#currentPositions: Array<StockData> = [];
 
-	public constructor(ns: NS) {
+	constructor(ns: NS) {
 		this.#dataHandler = new StockMarketDataHandler(ns);
+		this.#statusHandler = new StockMarketStatusHandler(ns);
 
 		this.#ns = ns;
 		this.#api = ns.stock;
@@ -56,9 +64,7 @@ class StockMarketTrader {
 
 	public async trade(): Promise<void> {
 		this.#stockData = this.#dataHandler.getAllStockData();
-
-		const longStocks = this.#stockData.filter((stock) => stock.type === PositionType.LONG);
-		this.#ns.printf(`Top 3 long stocks: ${longStocks[0]?.symbol}, ${longStocks[1]?.symbol}, ${longStocks[2]?.symbol}.`);
+		this.#statusHandler.updateWith(this.#stockData);
 
 		this.#currentPositions = this.#resolveExistingPositions();
 
@@ -216,5 +222,43 @@ class StockMarketDataHandler {
 
 	#sortByAbsoluteExpectedChange(stockDataA: StockData, stockDataB: StockData): number {
 		return Math.abs(stockDataB.expectedGain) - Math.abs(stockDataA.expectedGain);
+	}
+}
+
+class StockMarketStatusHandler {
+	readonly #ns;
+
+	readonly #lastStatus: Status = {
+		topLongStocks: [],
+		topMarketCapStock: "",
+	};
+
+	constructor(ns: NS) {
+		this.#ns = ns;
+	}
+
+	public updateWith(stockData: Array<StockData>) {
+		const topLongStocks = stockData
+			.filter((stock) => stock.type === PositionType.LONG)
+			.map((stock) => stock.symbol)
+			.slice(0, 2);
+
+		if (topLongStocks.join(",") !== this.#lastStatus.topLongStocks.join(",")) {
+			this.#lastStatus.topLongStocks = topLongStocks;
+			this.#ns.printf(`Top 3 long stocks: ${topLongStocks[0]}, ${topLongStocks[1]}, ${topLongStocks[2]}.`);
+		}
+
+		const topMarketCapStock = stockData.reduce((prev, curr) => {
+			if (prev && prev.maxShares * prev.price > curr.maxShares * curr.price) {
+				return prev;
+			} else {
+				return curr;
+			}
+		}).symbol;
+
+		if (topMarketCapStock !== this.#lastStatus.topMarketCapStock) {
+			this.#lastStatus.topMarketCapStock = topMarketCapStock;
+			this.#ns.printf(`Top market cap stock: ${topMarketCapStock}.`);
+		}
 	}
 }
