@@ -10,6 +10,9 @@ const createContext = async () =>
 				port: 12525,
 				types: "NetscriptDefinitions.d.ts",
 				pushOnConnect: true,
+				distribute: {
+					"home": ["home"]
+				},
 				mirror: {
 					"servers": ["home"]
 				}
