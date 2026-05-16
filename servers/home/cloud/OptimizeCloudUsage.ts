@@ -1,4 +1,4 @@
-import { getMostEfficientTargetServer } from "../MostEfficientTargetServer";
+import { getMostEfficientTargetServer } from "../hacking/MostEfficientTargetServer";
 
 export function main(ns: NS) {
 	const [overrideRunningScripts] = ns.args;

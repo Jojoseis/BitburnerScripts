@@ -1,4 +1,4 @@
-import { getControlledServerData } from "./ControlledServerData.ts";
+import { getControlledServerData } from "../ControlledServerData.ts";
 
 export function getMostEfficientTargetServer(ns: NS) {
 	const servers = getControlledServerData(ns);
