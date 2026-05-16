@@ -10,30 +10,26 @@ export type CodingContract<TYPE extends keyof CodingContractSignatures = keyof C
 	numTriesRemaining(): number;
 };
 
-const CONTRACT_SLEEP_TIME = 1000;
 const CONTRACT_SOLVER = new ContractSolver();
 
 export async function main(ns: NS) {
-	while (true) {
-		const contract = findContract(ns);
-		if (contract) {
-			try {
-				const startTimeStamp = Date.now();
-				const reward = solveContract(contract);
+	const contract = findContract(ns);
+	if (contract) {
+		try {
+			const startTimeStamp = Date.now();
+			const reward = solveContract(contract);
 
-				ns.tprint(`Solved contract after ${Date.now() - startTimeStamp}ms. Reward: ${reward}`);
-			} catch (error) {
-				if (error instanceof ContractHandlerError) {
-					const message = (error as Error).message;
-					ns.tprint(message);
-					ns.alert(message);
-					ns.exit();
-				} else {
-					throw error;
-				}
+			ns.tprint(`Solved contract after ${Date.now() - startTimeStamp}ms. Reward: ${reward}`);
+		} catch (error) {
+			if (error instanceof ContractHandlerError) {
+				const message = (error as Error).message;
+				ns.tprint(message);
+				ns.alert(message);
+				ns.exit();
+			} else {
+				throw error;
 			}
 		}
-		await ns.sleep(CONTRACT_SLEEP_TIME);
 	}
 }
 

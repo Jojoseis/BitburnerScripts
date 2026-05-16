@@ -14,7 +14,6 @@ const scripts: Record<string, Array<string>> = {
 
 const scriptSpecialConfiguration: Record<string, ScriptSpecialConfig> = {
 	"HomeEnablement.ts": ScriptSpecialConfig.RUN_ONCE,
-	"ContractHandler.ts": ScriptSpecialConfig.RUN_ONCE,
 	"BuyServers.ts": ScriptSpecialConfig.RUN_ONCE,
 	"StockMarketStarter.ts": ScriptSpecialConfig.RUN_ONCE,
 };
