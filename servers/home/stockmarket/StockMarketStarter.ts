@@ -4,7 +4,7 @@ const FUND_BUFFER = 5_000_000_000;
 export async function main(ns: NS) {
 	await buyStockExchangeRequirements(ns);
 	ns.alert("Stock market API fully accessible! Now starting auto trade.");
-	ns.run("StockMarketTrader.ts");
+	ns.run("stockmarket/StockMarketTrader.ts");
 }
 
 async function buyStockExchangeRequirements(ns: NS) {

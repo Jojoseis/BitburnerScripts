@@ -3,7 +3,7 @@ const DEFAULT_SERVER_NAME = "cloud-server";
 const FUND_BUFFER_MULTIPLIER = 1;
 
 export async function main(ns: NS) {
-	ns.run("OptimizeCloudUsage.ts");
+	ns.run("cloud/OptimizeCloudUsage.ts");
 
 	const cloud = ns.cloud;
 
@@ -15,12 +15,12 @@ export async function main(ns: NS) {
 		if (ns.getServerMoneyAvailable("home") >= serverCost * (FUND_BUFFER_MULTIPLIER + 1)) {
 			const newServerName = `${DEFAULT_SERVER_NAME}-${serverNames.length + 1}`;
 			cloud.purchaseServer(newServerName, ram);
-			ns.run("OptimizeCloudUsage.ts");
+			ns.run("cloud/OptimizeCloudUsage.ts");
 		} else {
 			await ns.sleep(BUY_SLEEP_TIME);
 		}
 	}
 
 	ns.alert("All cloud servers purchased! Upgrading servers next.");
-	ns.spawn("UpgradeServers.ts", { spawnDelay: 0 });
+	ns.spawn("cloud/UpgradeServers.ts", { spawnDelay: 0 });
 }

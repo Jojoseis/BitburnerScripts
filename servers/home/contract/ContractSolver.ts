@@ -122,7 +122,7 @@ export default class ContractSolver implements ContractSolvers {
 	public "Total Ways to Sum"(data: number): number {
 		/**
 		 * Idea:
-		 * - iterate for each 1 to X
+		 * - iterate for each 2 to X
 		 * - for every iteration n:
 		 *  - a new entry with '<n-1> + 1' is added
 		 * 	- every previous sum chain will be kept, with a '+1' added at the end
@@ -155,17 +155,17 @@ export default class ContractSolver implements ContractSolvers {
 			const newReproductionCapableSumChainEndings: Array<number> = [];
 
 			for (const [secondToLast, last] of reproducingSumChainEndings) {
-				// this iteration is '... + secondToLast + last + 1' & '... + secondToLast + <last+1>'
-				const newSumChainEndings: Array<[number, number]> = [
-					[last, 1],
-					[secondToLast, last + 1],
-				];
-				for (const [newSecondToLast, newLast] of newSumChainEndings) {
-					if (newSecondToLast > newLast) {
-						newReproducingSumChainEndings.push([newSecondToLast, newLast]);
-					} else if (newSecondToLast > 1 && newLast > 1 && newSecondToLast === newLast) {
-						newReproductionCapableSumChainEndings.push(newLast);
-					}
+				// '... + secondToLast + last + 1'
+				if (last > 1) {
+					newReproducingSumChainEndings.push([last, 1]);
+				}
+
+				// '... + secondToLast + <last+1>'
+				if (secondToLast > last + 1) {
+					newReproducingSumChainEndings.push([secondToLast, last + 1]);
+				} else {
+					// secondToLast === (last + 1)
+					newReproductionCapableSumChainEndings.push(secondToLast);
 				}
 			}
 
@@ -173,7 +173,8 @@ export default class ContractSolver implements ContractSolvers {
 				newReproducingSumChainEndings.push([last, 1]);
 			}
 
-			if (index - 1 > 1) {
+			if (index > 2) {
+				// the 1 + 1 sum chain created on the first iteration is not able to reproduce
 				newReproducingSumChainEndings.push([index - 1, 1]);
 			}
 

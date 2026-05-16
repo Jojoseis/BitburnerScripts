@@ -6,16 +6,16 @@ enum ScriptSpecialConfig {
 
 const scripts: Record<string, Array<string>> = {
 	"HomeEnablement.ts": [],
-	"Worm.ts": [],
-	"ContractHandler.ts": [],
-	"BuyServers.ts": ["UpgradeServers.ts"],
-	"StockMarketStarter.ts": ["StockMarketTrader.ts"],
+	"hacking/Worm.ts": [],
+	"contract/ContractHandler.ts": [],
+	"cloud/BuyServers.ts": ["cloud/UpgradeServers.ts"],
+	"stockmarket/StockMarketStarter.ts": ["stockmarket/StockMarketTrader.ts"],
 };
 
 const scriptSpecialConfiguration: Record<string, ScriptSpecialConfig> = {
 	"HomeEnablement.ts": ScriptSpecialConfig.RUN_ONCE,
-	"BuyServers.ts": ScriptSpecialConfig.RUN_ONCE,
-	"StockMarketStarter.ts": ScriptSpecialConfig.RUN_ONCE,
+	"cloud/BuyServers.ts": ScriptSpecialConfig.RUN_ONCE,
+	"stockmarket/StockMarketStarter.ts": ScriptSpecialConfig.RUN_ONCE,
 };
 
 const previouslyRunScripts: Set<string> = new Set();

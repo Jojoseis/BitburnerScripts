@@ -6,11 +6,11 @@ export async function main(ns: NS) {
 		return;
 	}
 
-	ns.scp("ShareRAM.ts", targetServer, "home");
-	const hackRamUsage = ns.getScriptRam("ShareRAM.ts", targetServer);
+	ns.scp("cloud/ShareRAM.ts", targetServer, "home");
+	const hackRamUsage = ns.getScriptRam("cloud/ShareRAM.ts", targetServer);
 	const availableServerRam = ns.getServerMaxRam(targetServer) - ns.getServerUsedRam(targetServer);
 	const threadCount = Math.floor(availableServerRam / hackRamUsage);
 	if (threadCount > 0) {
-		ns.exec("ShareRAM.ts", targetServer, { threads: threadCount });
+		ns.exec("cloud/ShareRAM.ts", targetServer, { threads: threadCount });
 	}
 }
