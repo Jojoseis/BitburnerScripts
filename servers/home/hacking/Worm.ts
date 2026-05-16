@@ -1,4 +1,5 @@
-import { establishControl } from "./EstablishControl.ts";
+import FilePaths from "../utils/FilePaths";
+import { establishControl } from "./EstablishControl";
 
 export function main(ns: NS) {
 	const [overrideRunningScripts] = ns.args;
@@ -30,16 +31,16 @@ function recursiveScanAndControl(ns: NS, server: string | undefined, targetedSer
 		}
 
 		if (rootAccess) {
-			ns.scp("hacking/BaseHack.ts", connectedServer, "home");
+			ns.scp(FilePaths.BASE_HACK, connectedServer, "home");
 			if (overrideScripts) {
-				ns.scriptKill("hacking/BaseHack.ts", connectedServer);
+				ns.scriptKill(FilePaths.BASE_HACK, connectedServer);
 			}
 
-			const hackRamUsage = ns.getScriptRam("hacking/BaseHack.ts", connectedServer);
+			const hackRamUsage = ns.getScriptRam(FilePaths.BASE_HACK, connectedServer);
 			const availableServerRam = serverInfo.maxRam - ns.getServerUsedRam(connectedServer);
 			const threads = Math.floor(availableServerRam / hackRamUsage);
 			if (threads > 0 && ns.getServerRequiredHackingLevel(connectedServer) <= ns.getHackingLevel()) {
-				ns.exec("hacking/BaseHack.ts", connectedServer, { threads: threads }, connectedServer);
+				ns.exec(FilePaths.BASE_HACK, connectedServer, { threads: threads }, connectedServer);
 			}
 
 			recursiveScanAndControl(ns, connectedServer, targetedServers, overrideScripts);

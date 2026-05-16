@@ -1,6 +1,6 @@
-import PositionType from "./PositionType.ts";
-import StockMarketDataHandler, { type StockData } from "./StockMarketDataHandler.ts";
-import StockMarketStatusHandler from "./StockMarketStatusHandler.ts";
+import PositionType from "./PositionType";
+import StockMarketDataHandler, { type StockData } from "./StockMarketDataHandler";
+import StockMarketStatusHandler from "./StockMarketStatusHandler";
 
 export async function main(ns: NS) {
 	ns.disableLog("ALL");

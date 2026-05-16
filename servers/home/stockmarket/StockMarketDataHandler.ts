@@ -1,4 +1,4 @@
-import PositionType from "./PositionType.ts";
+import PositionType from "./PositionType";
 
 export type StockData = StockKeyData & {
 	expectedGain: number;

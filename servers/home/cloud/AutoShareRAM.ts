@@ -1,3 +1,5 @@
+import FilePaths from "../utils/FilePaths";
+
 export async function main(ns: NS) {
 	const [targetServer] = ns.args;
 
@@ -6,11 +8,11 @@ export async function main(ns: NS) {
 		return;
 	}
 
-	ns.scp("cloud/ShareRAM.ts", targetServer, "home");
-	const hackRamUsage = ns.getScriptRam("cloud/ShareRAM.ts", targetServer);
+	ns.scp(FilePaths.SHARE_RAM, targetServer, "home");
+	const hackRamUsage = ns.getScriptRam(FilePaths.SHARE_RAM, targetServer);
 	const availableServerRam = ns.getServerMaxRam(targetServer) - ns.getServerUsedRam(targetServer);
 	const threadCount = Math.floor(availableServerRam / hackRamUsage);
 	if (threadCount > 0) {
-		ns.exec("cloud/ShareRAM.ts", targetServer, { threads: threadCount });
+		ns.exec(FilePaths.SHARE_RAM, targetServer, { threads: threadCount });
 	}
 }

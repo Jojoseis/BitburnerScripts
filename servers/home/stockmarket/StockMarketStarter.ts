@@ -1,10 +1,12 @@
+import FilePaths from "../utils/FilePaths";
+
 const RETRY_DELAY = 1000;
 const FUND_BUFFER = 5_000_000_000;
 
 export async function main(ns: NS) {
 	await buyStockExchangeRequirements(ns);
 	ns.alert("Stock market API fully accessible! Now starting auto trade.");
-	ns.run("stockmarket/StockMarketTrader.ts");
+	ns.run(FilePaths.STOCK_MARKET_TRADER);
 }
 
 async function buyStockExchangeRequirements(ns: NS) {

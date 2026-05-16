@@ -1,4 +1,5 @@
 import { getMostEfficientTargetServer } from "../hacking/MostEfficientTargetServer";
+import FilePaths from "../utils/FilePaths";
 
 export function main(ns: NS) {
 	const [overrideRunningScripts] = ns.args;
@@ -23,14 +24,14 @@ export function main(ns: NS) {
 			cloudServer.endsWith("-24") ||
 			cloudServer.endsWith("-25")
 		) {
-			ns.exec("cloud/AutoShareRAM.ts", "home", 1, cloudServer);
+			ns.exec(FilePaths.AUTO_SHARE_RAM, "home", 1, cloudServer);
 		} else {
-			ns.scp("hacking/BaseHack.ts", cloudServer, "home");
-			const hackRamUsage = ns.getScriptRam("hacking/BaseHack.ts", cloudServer);
+			ns.scp(FilePaths.BASE_HACK, cloudServer, "home");
+			const hackRamUsage = ns.getScriptRam(FilePaths.BASE_HACK, cloudServer);
 			const availableServerRam = ns.getServerMaxRam(cloudServer) - ns.getServerUsedRam(cloudServer);
 			const threadCount = Math.floor(availableServerRam / hackRamUsage);
 			if (threadCount > 0) {
-				ns.exec("hacking/BaseHack.ts", cloudServer, { threads: threadCount }, targetServer.hostname);
+				ns.exec(FilePaths.BASE_HACK, cloudServer, { threads: threadCount }, targetServer.hostname);
 			}
 		}
 	}

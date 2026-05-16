@@ -1,3 +1,5 @@
+import FilePaths from "./utils/FilePaths";
+
 const SLEEP_DELAY = 10000;
 
 enum ScriptSpecialConfig {
@@ -5,22 +7,22 @@ enum ScriptSpecialConfig {
 }
 
 const scripts: Record<string, Array<string>> = {
-	"HomeEnablement.ts": [],
-	"hacking/Worm.ts": [],
-	"contract/ContractHandler.ts": [],
-	"cloud/BuyServers.ts": ["cloud/UpgradeServers.ts"],
-	"stockmarket/StockMarketStarter.ts": ["stockmarket/StockMarketTrader.ts"],
+	[FilePaths.HOME_ENABLEMENT]: [],
+	[FilePaths.WORM]: [],
+	[FilePaths.CONTRACT_HANDLER]: [],
+	[FilePaths.BUY_SERVERS]: [FilePaths.UPGRADE_SERVERS],
+	[FilePaths.STOCK_MARKET_STARTER]: [FilePaths.STOCK_MARKET_TRADER],
 };
 
 const scriptSpecialConfiguration: Record<string, ScriptSpecialConfig> = {
-	"HomeEnablement.ts": ScriptSpecialConfig.RUN_ONCE,
-	"cloud/BuyServers.ts": ScriptSpecialConfig.RUN_ONCE,
-	"stockmarket/StockMarketStarter.ts": ScriptSpecialConfig.RUN_ONCE,
+	[FilePaths.HOME_ENABLEMENT]: ScriptSpecialConfig.RUN_ONCE,
+	[FilePaths.BUY_SERVERS]: ScriptSpecialConfig.RUN_ONCE,
+	[FilePaths.STOCK_MARKET_STARTER]: ScriptSpecialConfig.RUN_ONCE,
 };
 
-const previouslyRunScripts: Set<string> = new Set();
-
 export async function main(ns: NS) {
+	const previouslyRunScripts: Set<string> = new Set();
+
 	while (true) {
 		for (const script in scripts) {
 			const subScripts = scripts[script];

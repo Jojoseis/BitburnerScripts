@@ -1,5 +1,5 @@
-import PositionType from "./PositionType.ts";
-import type { StockData } from "./StockMarketDataHandler.ts";
+import PositionType from "./PositionType";
+import type { StockData } from "./StockMarketDataHandler";
 
 type Status = {
 	topLongStocks: Array<string>;

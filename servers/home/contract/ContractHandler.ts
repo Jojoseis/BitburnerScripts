@@ -1,5 +1,5 @@
-import ContractSolver, { type ContractData, type ContractSolution, UnimplementedSolutionError } from "./ContractSolver.ts";
-import { getControlledServerData } from "./ControlledServerData.ts";
+import ContractSolver, { type ContractData, type ContractSolution, UnimplementedSolutionError } from "./ContractSolver";
+import { getControlledServerData } from "./ControlledServerData";
 
 export type CodingContract<TYPE extends keyof CodingContractSignatures = keyof CodingContractSignatures> = {
 	type: TYPE;
