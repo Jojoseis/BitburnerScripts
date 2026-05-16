@@ -16,7 +16,13 @@ export function main(ns: NS) {
 			ns.killall(cloudServer);
 		}
 
-		if (cloudServer.endsWith("-23") || cloudServer.endsWith("-24") || cloudServer.endsWith("-25")) {
+		if (
+			cloudServer.endsWith("-21") ||
+			cloudServer.endsWith("-22") ||
+			cloudServer.endsWith("-23") ||
+			cloudServer.endsWith("-24") ||
+			cloudServer.endsWith("-25")
+		) {
 			ns.exec("AutoShareRAM.ts", "home", 1, cloudServer);
 		} else {
 			ns.scp("BaseHack.ts", cloudServer, "home");
