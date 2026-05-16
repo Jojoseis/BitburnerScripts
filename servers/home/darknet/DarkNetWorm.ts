@@ -43,8 +43,8 @@ class DarkNetWorm {
 		const authResult = await this.#dnet.authenticate(host, password);
 
 		if (authResult.success) {
-			this.#ns.scp("DarkNetWorm.ts", host);
-			this.#ns.exec("DarkNetWorm.ts", host);
+			this.#ns.scp("darknet/DarkNetWorm.ts", host);
+			this.#ns.exec("darknet/DarkNetWorm.ts", host);
 		} else {
 			this.#ns.alert(`Failed to authenticate on known darknet server ${host} with password ${password}`);
 		}
