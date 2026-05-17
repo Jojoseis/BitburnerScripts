@@ -1,10 +1,10 @@
-export type ServerData = Record<
-	string,
+export type ServerData = Record<string, ServerDetails>;
+
+type ServerDetails =
 	| Server
-	| (DarknetServerData & {
+	| (Server & {
 			isOnline: boolean;
-	  })
->;
+	  } & ReturnType<Darknet["getServerDetails"]>);
 
 export function getControlledServerData(ns: NS) {
 	const targetedServers: ServerData = {};
@@ -15,7 +15,16 @@ export function getControlledServerData(ns: NS) {
 }
 
 function recursiveScan(ns: NS, server: string, targetedServers: ServerData) {
-	targetedServers[server] = ns.getServer(server);
+	let serverData: ServerDetails = ns.getServer(server);
+
+	if ("isOnline" in serverData) {
+		serverData = {
+			...serverData,
+			...ns.dnet.getServerDetails(server),
+		};
+	}
+
+	targetedServers[server] = serverData;
 
 	for (const connectedServer of ns.scan(server)) {
 		if (connectedServer in targetedServers) {
