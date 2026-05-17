@@ -1,5 +1,5 @@
+import { getControlledServerData } from "../hacking/ControlledServerData";
 import ContractSolver, { type ContractData, type ContractSolution, UnimplementedSolutionError } from "./ContractSolver";
-import { getControlledServerData } from "./ControlledServerData";
 
 export type CodingContract<TYPE extends keyof CodingContractSignatures = keyof CodingContractSignatures> = {
 	type: TYPE;
