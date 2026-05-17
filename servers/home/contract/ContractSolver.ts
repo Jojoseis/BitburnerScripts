@@ -113,17 +113,19 @@ export default class ContractSolver implements ContractSolvers {
 		const GROUP_SIZE = 3;
 		for (let i = 0; i < condensedData.length - 2; ) {
 			const a = condensedData[i];
-			if (a > 0) {
-				// when a > 0, then the following two numbers are negative and positive respectively
-				// because positive/negative numbers are alternating (previous step)
-				const b = Math.abs(condensedData[i + 1]);
-				const c = condensedData[i + 2];
-				if (a >= b && c >= b) {
-					condensedData.splice(i, GROUP_SIZE, a - b + c);
-					i = i - 2; // re-check if merge with previous group is possible
-				} else {
-					i = i + 2;
+			// when a > 0, then the following two numbers are negative and positive respectively
+			// because positive/negative numbers are alternating (previous step)
+			const b = Math.abs(condensedData[i + 1]);
+			const c = condensedData[i + 2];
+			if (a >= b && c >= b) {
+				condensedData.splice(i, GROUP_SIZE, a - b + c);
+
+				if (i > 0) {
+					// re-check if merge with previous group is possible
+					i = i - 2;
 				}
+			} else {
+				i = i + 2;
 			}
 		}
 
