@@ -39,7 +39,7 @@ export default class ContractSolver implements ContractSolvers {
 				}
 			}
 
-			factors.sort();
+			factors.sort((a, b) => a - b);
 		}
 
 		return maxPrimeFactor;
