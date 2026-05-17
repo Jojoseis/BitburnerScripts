@@ -21,6 +21,10 @@ export default class ContractSolver implements ContractSolvers {
 		while (factors.length > 0) {
 			const factor = factors.pop() as number;
 
+			if (factor <= maxPrimeFactor) {
+				break; // stop once the remaining factors are smaller then the already determined max prime factor
+			}
+
 			const subFactor = this.#findFactor(factor);
 			if (subFactor === false) {
 				if (factor > maxPrimeFactor) {
@@ -57,10 +61,10 @@ export default class ContractSolver implements ContractSolvers {
 
 		const MAX_C = 1000;
 		if (d === n) {
-			if (c + 1 < d && c < MAX_C) {
-				return this.#findFactor(n, c + 1);
+			if (c + 1 >= d || c >= MAX_C) {
+				return false;
 			}
-			return false;
+			return this.#findFactor(n, c + 1);
 		}
 
 		return d;
@@ -77,10 +81,16 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Subarray with Maximum Sum"(data: Array<number>): number {
+		// filter 0 values
+		const nonZeroData = data.filter((number) => number !== 0);
+
 		const condensedData: Array<number> = [];
 
+		// group adjacent groups of positive or negative numbers to reduce array size
+		// [-2, 1, -2, -1 , 3, 2, -1] => [1, -3, 5]
+		// a secondary effect is that positive/negative numbers are now always alternating
 		let currentGroupSum = 0;
-		for (const number of data) {
+		for (const number of nonZeroData) {
 			if (number > 0 && currentGroupSum >= 0) {
 				currentGroupSum += number;
 			} else if (number < 0 && currentGroupSum <= 0) {
@@ -90,11 +100,38 @@ export default class ContractSolver implements ContractSolvers {
 				currentGroupSum = number;
 			}
 		}
-		condensedData.push(currentGroupSum);
+		// omit adding negative tail
+		if (currentGroupSum > 0) {
+			condensedData.push(currentGroupSum);
+		}
+		// remove negative head
+		if (condensedData[0] < 0) {
+			condensedData.shift();
+		}
+
+		// reduce data set further by grouping sections where a, c > |b| for [..., a, b, c, ...] to [..., a + b + c, ...]
+		const GROUP_SIZE = 3;
+		for (let i = 0; i < condensedData.length - 2; ) {
+			const a = condensedData[i];
+			if (a > 0) {
+				// when a > 0, then the following two numbers are negative and positive respectively
+				// because positive/negative numbers are alternating (previous step)
+				const b = Math.abs(condensedData[i + 1]);
+				const c = condensedData[i + 2];
+				if (a >= b && c >= b) {
+					condensedData.splice(i, GROUP_SIZE, a - b + c);
+					i = i - 2; // re-check if merge with previous group is possible
+				} else {
+					i = i + 2;
+				}
+			}
+		}
 
 		const possibleIndexes = this.#getIndexesOfPositiveNumbers(condensedData);
 
-		let maxSubarraySum = Math.max(...data); // using the largest number as a starting point
+		// using the largest number as a starting point
+		// required because the optimized data set may be empty if all initial data points were < 0
+		let maxSubarraySum = Math.max(...data);
 		for (const possibleStartIndex of possibleIndexes) {
 			for (const possibleEndIndex of possibleIndexes.filter((index) => index >= possibleStartIndex)) {
 				const subarraySum = condensedData.slice(possibleStartIndex, possibleEndIndex + 1).reduce((sum, number) => sum + number, 0);
