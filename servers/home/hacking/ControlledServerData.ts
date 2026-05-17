@@ -23,8 +23,11 @@ function recursiveScan(ns: NS, server: string, targetedServers: ServerData) {
 			...ns.dnet.getServerDetails(server),
 		};
 	}
+<<<<<<< HEAD
 
 	targetedServers[server] = serverData;
+=======
+>>>>>>> 928583a85bb1af6807e2e4741e1c954cac747edc
 
 	for (const connectedServer of ns.scan(server)) {
 		if (connectedServer in targetedServers) {
