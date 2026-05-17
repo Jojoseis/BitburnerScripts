@@ -1,7 +1,3 @@
-type DarknetServer = DarknetServerData & {
-	isOnline: boolean;
-};
-
 export async function main(ns: NS) {
 	const worm = new DarkNetWorm(ns);
 	await worm.run();
@@ -26,16 +22,15 @@ class DarkNetWorm {
 				continue;
 			}
 
-			if (host in DarkNetWorm.#serverAuthMap) {
-				await this.#replicateOnto(host);
-			} else {
-				this.#dnet.getServerAuthDetails(host);
+			if (!(host in DarkNetWorm.#serverAuthMap)) {
+				server.passwordFormat; // TODO
 			}
+			await this.#replicateOnto(host);
 		}
 	}
 
-	#getServer(host: string): DarknetServer {
-		return this.#ns.getServer(host) as DarknetServer;
+	#getServer(host: string) {
+		return this.#ns.dnet.getServerDetails(host);
 	}
 
 	async #replicateOnto(host: string) {
