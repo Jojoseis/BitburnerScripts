@@ -10,6 +10,8 @@ export type CodingContract<TYPE extends keyof CodingContractSignatures = keyof C
 	numTriesRemaining(): number;
 };
 
+const WARNING_THRESHOLD = 1_000;
+
 const CONTRACT_SOLVER = new ContractSolver();
 
 export async function main(ns: NS) {
@@ -19,7 +21,11 @@ export async function main(ns: NS) {
 			const startTimeStamp = Date.now();
 			const reward = solveContract(contract);
 
-			ns.tprint(`Solved contract after ${Date.now() - startTimeStamp}ms. Reward: ${reward}`);
+			const runTime = Date.now() - startTimeStamp;
+			ns.tprint(`Solved contract after ${runTime}ms. Reward: ${reward}`);
+			if (runTime > WARNING_THRESHOLD) {
+				ns.tprint(`Warning: Contract solved slowly (${runTime}ms). Contract type: ${contract.type}, Data: ${JSON.stringify(contract.data)}.`);
+			}
 		} catch (error) {
 			if (error instanceof ContractHandlerError) {
 				const message = (error as Error).message;
