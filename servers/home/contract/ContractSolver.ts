@@ -187,8 +187,9 @@ export default class ContractSolver implements ContractSolvers {
 		// sum chains that match case 2. will create extra sum chains in two iterations
 		let reproductionCapableSumChainEndings: Array<number> = [];
 
+		let additionalPrecalculatedWaysCount = 0;
 		for (let index = 2; index <= data; index++) {
-			currentWayCount = currentWayCount + 1 + reproducingSumChainEndings.length;
+			currentWayCount += 1 + reproducingSumChainEndings.length;
 
 			const newReproducingSumChainEndings: Array<[number, number]> = [];
 			const newReproductionCapableSumChainEndings: Array<number> = [];
@@ -196,7 +197,11 @@ export default class ContractSolver implements ContractSolvers {
 			for (const [secondToLast, last] of reproducingSumChainEndings) {
 				// '... + secondToLast + last + 1'
 				if (last > 1) {
-					newReproducingSumChainEndings.push([last, 1]);
+					if (last <= 2) {
+						additionalPrecalculatedWaysCount += this.#calculateAdditionalWaysForNPlusOneTails(last, data - index);
+					} else {
+						newReproducingSumChainEndings.push([last, 1]);
+					}
 				}
 
 				// '... + secondToLast + <last+1>'
@@ -221,7 +226,26 @@ export default class ContractSolver implements ContractSolvers {
 			reproductionCapableSumChainEndings = newReproductionCapableSumChainEndings;
 		}
 
-		return currentWayCount;
+		return currentWayCount + additionalPrecalculatedWaysCount;
+	}
+
+	#calculateAdditionalWaysForNPlusOneTails(n: number, remainingIterations: number): number {
+		const nMinusOne = n - 1;
+
+		// ... n + 1, ... n + n + 1
+		let additionalWays = Math.floor((remainingIterations + nMinusOne) / n);
+
+		// TODO currently unfinished for n > 2
+		if (n > 2) {
+			while (remainingIterations > nMinusOne) {
+				// ... n + 2 + 1, ... n + n + 2 + 1
+				additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(nMinusOne, remainingIterations - nMinusOne) + 1;
+				remainingIterations -= n;
+				additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(n, remainingIterations) + 1;
+			}
+		}
+
+		return additionalWays;
 	}
 
 	public "Total Ways to Sum II"(data: [number, Array<number>]): number {
@@ -284,7 +308,32 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Unique Paths in a Grid I"(data: [number, number]): number {
-		throw new UnimplementedSolutionError();
+		let [length, width] = data;
+
+		/**
+		 * Idea:
+		 * all fields in the last column and last row have only 1 path to the end
+		 * for every other field, the amount of paths to the end is the sum of the paths of the field to the right and the field below it
+		 * a resulting grid of path counts might look like this for a 4x3 grid:
+		 * 10  4  1
+		 *  6  3  1
+		 *  3  2  1
+		 *  1  1  1
+		 * so the calculation can be done iteratively starting from bottom to top and right to left while only tracking one field in each row
+		 *
+		 * a minor RAM optimization can be done by minimizing the amount of tracked fields by tracking a row or column depending on which one is smaller
+		 */
+		if (width > length) {
+			[width, length] = [length, width];
+		}
+
+		const currentRowPathCounts = new Array(width).fill(1);
+		for (let x = length - 1; x > 0; x--) {
+			for (let y = width - 1; y > 0; y--) {
+				currentRowPathCounts[y - 1] = currentRowPathCounts[y] + currentRowPathCounts[y - 1];
+			}
+		}
+		return currentRowPathCounts[0];
 	}
 
 	public "Unique Paths in a Grid II"(data: Array<Array<1 | 0>>): number {
@@ -354,7 +403,33 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Encryption II: Vigenère Cipher"(data: [string, string]): string {
-		throw new UnimplementedSolutionError();
+		const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		const alphabetLength = alphabet.length;
+		const charsToIgnore = [" "];
+
+		let [input, encoding] = data;
+
+		while (encoding.length < input.length) {
+			encoding += encoding;
+		}
+
+		let result = "";
+		for (let index = 0; index < input.length; index++) {
+			const inputChar = input.charAt(index);
+			const encodingChar = encoding.charAt(index);
+
+			if (charsToIgnore.includes(inputChar)) {
+				result += inputChar;
+				continue;
+			}
+
+			const resultCharIndex = (alphabet.indexOf(inputChar) + alphabet.indexOf(encodingChar)) % alphabetLength;
+			const resultChar = alphabet.charAt(resultCharIndex);
+
+			result += resultChar;
+		}
+
+		return result;
 	}
 
 	public "Square Root"(data: bigint): bigint {
