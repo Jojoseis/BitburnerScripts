@@ -253,7 +253,37 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Spiralize Matrix"(data: Array<Array<number>>): Array<number> {
-		throw new UnimplementedSolutionError();
+		let nextStep: "top" | "right" | "bottom" | "left" = "top";
+		const spiralizedData: Array<number> = [];
+
+		while (data.length > 0) {
+			switch (nextStep) {
+				case "top":
+					spiralizedData.push(...data.shift()!);
+					nextStep = "right";
+					break;
+				case "bottom":
+					spiralizedData.push(...data.pop()!.reverse());
+					nextStep = "left";
+					break;
+				case "right":
+					for (const row of data) {
+						spiralizedData.push(row.pop()!);
+					}
+					nextStep = "bottom";
+					break;
+				case "left":
+					for (const row of data) {
+						spiralizedData.push(row.shift()!);
+					}
+					nextStep = "top";
+					break;
+			}
+			if (data[0]?.length === 0) {
+				data = [];
+			}
+		}
+		return spiralizedData;
 	}
 
 	public "Array Jumping Game"(data: Array<number>): 1 | 0 {
