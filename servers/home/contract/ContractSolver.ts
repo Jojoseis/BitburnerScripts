@@ -262,18 +262,18 @@ export default class ContractSolver implements ContractSolvers {
 					spiralizedData.push(...data.shift()!);
 					nextStep = "right";
 					break;
-				case "bottom":
-					spiralizedData.push(...data.pop()!.reverse());
-					nextStep = "left";
-					break;
 				case "right":
 					for (const row of data) {
 						spiralizedData.push(row.pop()!);
 					}
 					nextStep = "bottom";
 					break;
+				case "bottom":
+					spiralizedData.push(...data.pop()!.reverse());
+					nextStep = "left";
+					break;
 				case "left":
-					for (const row of data) {
+					for (const row of data.toReversed()) {
 						spiralizedData.push(row.shift()!);
 					}
 					nextStep = "top";
