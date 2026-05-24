@@ -257,11 +257,43 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Array Jumping Game"(data: Array<number>): 1 | 0 {
-		throw new UnimplementedSolutionError();
+		let maxReachableIndex = 0;
+		for (let index = 0; index <= maxReachableIndex; index++) {
+			const currentJumpLength = data[index];
+			const currentReachableIndex = index + currentJumpLength;
+
+			if (currentReachableIndex >= data.length - 1) {
+				return 1;
+			}
+			if (currentReachableIndex > maxReachableIndex) {
+				maxReachableIndex = currentReachableIndex;
+			}
+		}
+		return 0;
 	}
 
 	public "Array Jumping Game II"(data: Array<number>): number {
-		throw new UnimplementedSolutionError();
+		const hasSolution = this["Array Jumping Game"](data);
+
+		if (!hasSolution) {
+			return 0;
+		}
+
+		let jumpCount = 0;
+		let minIndexThatCanReachEnd = data.length - 1;
+
+		while (minIndexThatCanReachEnd !== 0) {
+			let currentJumpMinStartIndex = Infinity;
+			for (let index = minIndexThatCanReachEnd - 1; index >= 0; index--) {
+				const jumpLength = data[index];
+				if (index + jumpLength >= minIndexThatCanReachEnd) {
+					currentJumpMinStartIndex = index;
+				}
+			}
+			minIndexThatCanReachEnd = currentJumpMinStartIndex;
+			jumpCount++;
+		}
+		return jumpCount;
 	}
 
 	public "Merge Overlapping Intervals"(data: Array<[number, number]>): Array<[number, number]> {
