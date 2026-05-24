@@ -369,7 +369,19 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Algorithmic Stock Trader II"(data: Array<number>): number {
-		throw new UnimplementedSolutionError();
+		if (data.length === 0) {
+			return 0;
+		}
+		let totalProfit = 0;
+
+		let buyPrice = data[0];
+		for (const day of data) {
+			if (day > buyPrice) {
+				totalProfit += day - buyPrice;
+			}
+			buyPrice = day;
+		}
+		return totalProfit;
 	}
 
 	public "Algorithmic Stock Trader III"(data: Array<number>): number {
