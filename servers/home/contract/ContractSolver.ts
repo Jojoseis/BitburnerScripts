@@ -265,7 +265,22 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Merge Overlapping Intervals"(data: Array<[number, number]>): Array<[number, number]> {
-		throw new UnimplementedSolutionError();
+		if (data.length === 0) {
+			return [];
+		}
+
+		data.sort((a, b) => a[0] - b[0]);
+		const nonOverlappingIntervals: Array<[number, number]> = [data.shift()!];
+
+		for (const currentInterval of data) {
+			const lastInterval = nonOverlappingIntervals[nonOverlappingIntervals.length - 1];
+			if (currentInterval[0] > lastInterval[1]) {
+				nonOverlappingIntervals.push(currentInterval);
+			} else if (currentInterval[1] > lastInterval[1]) {
+				lastInterval[1] = currentInterval[1];
+			}
+		}
+		return nonOverlappingIntervals;
 	}
 
 	public "Generate IP Addresses"(data: string): Array<string> {
