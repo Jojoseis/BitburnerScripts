@@ -514,7 +514,20 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Total Number of Primes"(data: Array<number>): number {
-		throw new UnimplementedSolutionError();
+		const [startIndex, endIndex] = data;
+
+		const numbers = new Array(endIndex + 1 /** index = number, simplifying by not using 0 */).fill(true);
+
+		for (let i = 2; i * i <= endIndex; i++) {
+			if (numbers[i]) {
+				// if i is prime, then cross all multiples
+				for (let j = i * 2; j <= endIndex; j += i) {
+					numbers[j] = false;
+				}
+			}
+		}
+
+		return numbers.slice(Math.max(startIndex, 2)).filter((isPrime) => isPrime).length;
 	}
 
 	public "Largest Rectangle in a Matrix"(data: Array<Array<1 | 0>>): [[number, number], [number, number]] {
