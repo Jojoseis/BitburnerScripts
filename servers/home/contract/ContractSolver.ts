@@ -346,7 +346,38 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Generate IP Addresses"(data: string): Array<string> {
-		throw new UnimplementedSolutionError();
+		const SEGMENT_COUNT = 4;
+		const digits = data.split("").map((char) => char);
+
+		return this.#placeSeparatorInIpDigits(digits, SEGMENT_COUNT);
+	}
+
+	#placeSeparatorInIpDigits(digits: Array<string>, segmentCount: number): Array<string> {
+		const SEGMENT_MAX_SIZE = 3;
+		const SEGMENT_MAX_VALUE = 255;
+
+		// pre-validation on raw segment size
+		const minSizeForSegment = Math.max(1, digits.length - SEGMENT_MAX_SIZE * segmentCount);
+
+		// segments starting with 0 are only valid when they are exactly '0'
+		let maxSizeForSegment: number;
+		if (digits[0] === "0") {
+			if (minSizeForSegment > 1) {
+				return [];
+			}
+			maxSizeForSegment = 1;
+		} else {
+			maxSizeForSegment = Math.min(SEGMENT_MAX_SIZE, digits.length - segmentCount);
+		}
+
+		const tails: Array<string> = [];
+		for (let size = minSizeForSegment; size <= maxSizeForSegment; size++) {
+			const segment = Number.parseInt(digits.slice(0, size).join(""), 10);
+			if (segment <= SEGMENT_MAX_VALUE) {
+				tails.push(...this.#placeSeparatorInIpDigits(digits.slice(size), segmentCount - 1).map((tail) => `${segment}.${tail}`));
+			}
+		}
+		return tails;
 	}
 
 	public "Algorithmic Stock Trader I"(data: Array<number>): number {
