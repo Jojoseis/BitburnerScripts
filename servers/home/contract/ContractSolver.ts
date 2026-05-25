@@ -197,11 +197,7 @@ export default class ContractSolver implements ContractSolvers {
 			for (const [secondToLast, last] of reproducingSumChainEndings) {
 				// '... + secondToLast + last + 1'
 				if (last > 1) {
-					if (last <= 2) {
-						additionalPrecalculatedWaysCount += this.#calculateAdditionalWaysForNPlusOneTails(last, data - index);
-					} else {
-						newReproducingSumChainEndings.push([last, 1]);
-					}
+					additionalPrecalculatedWaysCount += this.#calculateAdditionalWaysForNPlusOneTails(last, data - index);
 				}
 
 				// '... + secondToLast + <last+1>'
@@ -230,21 +226,20 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	#calculateAdditionalWaysForNPlusOneTails(n: number, remainingIterations: number): number {
-		const nMinusOne = n - 1;
-
 		// ... n + 1, ... n + n + 1
-		let additionalWays = Math.floor((remainingIterations + nMinusOne) / n);
+		let additionalWays = remainingIterations - Math.floor(remainingIterations / n);
 
-		// TODO currently unfinished for n > 2
-		if (n > 2) {
-			while (remainingIterations > nMinusOne) {
-				// ... n + 2 + 1, ... n + n + 2 + 1
-				additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(nMinusOne, remainingIterations - nMinusOne) + 1;
-				remainingIterations -= n;
-				additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(n, remainingIterations) + 1;
+		let i = 0;
+		while (remainingIterations > 0) {
+			if (i === n) {
+				i = 0; // ... + n
 			}
+			if (i > 1) {
+				additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(i, remainingIterations);
+			}
+			remainingIterations--;
+			i++;
 		}
-
 		return additionalWays;
 	}
 
