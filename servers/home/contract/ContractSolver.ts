@@ -177,35 +177,44 @@ export default class ContractSolver implements ContractSolvers {
 		 * 		- 1 (for newly created '<n-1> + 1' sum chain)
 		 * 		- the amount of chains from the previous iteration that match case 1.
 		 * 	- then update the sum chain endings that match case 1. or 2. for the next generation
-		 *
-		 * //TODO: determine if there is an even faster algorithm to determine the amount of sum chains that are capable of reproduction
 		 */
 		let currentWayCount = 0;
 
-		for (let index = 2; index <= data; index++) {
-			// +1 for the new chain '<index-1> + 1'
-			currentWayCount += 1 + this.#calculateAdditionalWaysForNPlusOneTails(index - 1, data - index);
+		const cache: Array<Array<number>> = [];
+		for (let i = 0; i < data; i++) {
+			cache.push([]);
+		}
+
+		for (let index = 2; index < data; index++) {
+			currentWayCount += 1 + this.#calculateAdditionalWaysForNPlusOneTails(index - 1, data - index, cache);
 		}
 
 		return currentWayCount;
 	}
 
-	#calculateAdditionalWaysForNPlusOneTails(n: number, remainingIterations: number): number {
-		// ... n + 1, ... n + n + 1
-		let additionalWays = remainingIterations - Math.floor(remainingIterations / n);
+	#calculateAdditionalWaysForNPlusOneTails(n: number, iterations: number, cache: Array<Array<number>>): number {
+		if (cache[n][iterations] === undefined) {
+			let remainingIterations = iterations;
 
-		let i = 0;
-		while (remainingIterations > 0) {
-			if (i === n) {
-				i = 0; // ... + n
+			// ... n + 1, ... n + n + 1
+			let additionalWays = remainingIterations - Math.floor(iterations / n);
+
+			let i = 0;
+			while (remainingIterations > 0) {
+				if (i === n) {
+					i = 0; // ... + n
+				}
+				if (i > 1) {
+					additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(i, remainingIterations, cache);
+				}
+				remainingIterations--;
+				i++;
 			}
-			if (i > 1) {
-				additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(i, remainingIterations);
-			}
-			remainingIterations--;
-			i++;
+
+			cache[n][iterations] = additionalWays;
 		}
-		return additionalWays;
+
+		return cache[n][iterations];
 	}
 
 	public "Total Ways to Sum II"(data: [number, Array<number>]): number {
