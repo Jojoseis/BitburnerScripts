@@ -178,34 +178,34 @@ export default class ContractSolver implements ContractSolvers {
 		 * 		- the amount of chains from the previous iteration that match case 1.
 		 * 	- then update the sum chain endings that match case 1. or 2. for the next generation
 		 */
-		let currentWayCount = data - 1;
 
+		const validNumbers: Array<boolean> = [];
 		const cache: Array<Array<number>> = [];
 		for (let i = 0; i < data; i++) {
 			cache.push([]);
+			validNumbers.push(true);
 		}
 
+		let currentWayCount = 1; // for 1+1+1+... sum chain
 		for (let index = 2; index < data; index++) {
-			currentWayCount += this.#calculateAdditionalWaysForNPlusOneTails(index - 1, data - index, cache);
+			currentWayCount += 1 + this.#calculateAdditionalWaysForNPlusOneTails(index - 1, data - index, validNumbers, cache);
 		}
-
 		return currentWayCount;
 	}
 
-	#calculateAdditionalWaysForNPlusOneTails(n: number, iterations: number, cache: Array<Array<number>>): number {
+	#calculateAdditionalWaysForNPlusOneTails(n: number, iterations: number, validNumbers: Array<boolean>, cache: Array<Array<number>>): number {
 		if (cache[n][iterations] === undefined) {
-			let remainingIterations = iterations;
-
 			// ... n + 1, ... n + n + 1
-			let additionalWays = remainingIterations - Math.floor(iterations / n);
+			let additionalWays = iterations - Math.floor(iterations / n);
 
+			let remainingIterations = iterations;
 			let i = 0;
 			while (remainingIterations > 0) {
 				if (i === n) {
 					i = 0; // ... + n
 				}
-				if (i > 1) {
-					additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(i, remainingIterations, cache);
+				if (i > 1 && validNumbers[i]) {
+					additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(i, remainingIterations, validNumbers, cache);
 				}
 				remainingIterations--;
 				i++;
@@ -219,6 +219,22 @@ export default class ContractSolver implements ContractSolvers {
 
 	public "Total Ways to Sum II"(data: [number, Array<number>]): number {
 		throw new UnimplementedSolutionError();
+		const [value, numbers] = data;
+
+		const validNumbers: Array<boolean> = [];
+		const cache: Array<Array<number>> = [];
+		for (let i = 0; i < value; i++) {
+			cache.push([]);
+			validNumbers.push(numbers.includes(i));
+		}
+
+		let currentWayCount = validNumbers[1] ? 1 : 0;
+		for (let index = 2; index < value; index++) {
+			if (validNumbers[index]) {
+				currentWayCount += 1 + this.#calculateAdditionalWaysForNPlusOneTails(index - 1, value - index, validNumbers, cache);
+			}
+		}
+		return currentWayCount;
 	}
 
 	public "Spiralize Matrix"(data: Array<Array<number>>): Array<number> {
