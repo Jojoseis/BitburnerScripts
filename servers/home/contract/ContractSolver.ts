@@ -178,7 +178,7 @@ export default class ContractSolver implements ContractSolvers {
 		 * 		- the amount of chains from the previous iteration that match case 1.
 		 * 	- then update the sum chain endings that match case 1. or 2. for the next generation
 		 */
-		let currentWayCount = 0;
+		let currentWayCount = data - 1;
 
 		const cache: Array<Array<number>> = [];
 		for (let i = 0; i < data; i++) {
@@ -186,7 +186,7 @@ export default class ContractSolver implements ContractSolvers {
 		}
 
 		for (let index = 2; index < data; index++) {
-			currentWayCount += 1 + this.#calculateAdditionalWaysForNPlusOneTails(index - 1, data - index, cache);
+			currentWayCount += this.#calculateAdditionalWaysForNPlusOneTails(index - 1, data - index, cache);
 		}
 
 		return currentWayCount;
