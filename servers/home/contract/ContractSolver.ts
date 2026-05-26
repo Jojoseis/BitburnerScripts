@@ -182,47 +182,12 @@ export default class ContractSolver implements ContractSolvers {
 		 */
 		let currentWayCount = 0;
 
-		// sum chains that match case 1. will create extra sum chains on the next iteration
-		let reproducingSumChainEndings: Array<[number, number]> = [];
-		// sum chains that match case 2. will create extra sum chains in two iterations
-		let reproductionCapableSumChainEndings: Array<number> = [];
-
-		let additionalPrecalculatedWaysCount = 0;
 		for (let index = 2; index <= data; index++) {
-			currentWayCount += 1 + reproducingSumChainEndings.length;
-
-			const newReproducingSumChainEndings: Array<[number, number]> = [];
-			const newReproductionCapableSumChainEndings: Array<number> = [];
-
-			for (const [secondToLast, last] of reproducingSumChainEndings) {
-				// '... + secondToLast + last + 1'
-				if (last > 1) {
-					additionalPrecalculatedWaysCount += this.#calculateAdditionalWaysForNPlusOneTails(last, data - index);
-				}
-
-				// '... + secondToLast + <last+1>'
-				if (secondToLast > last + 1) {
-					newReproducingSumChainEndings.push([secondToLast, last + 1]);
-				} else {
-					// secondToLast === (last + 1)
-					newReproductionCapableSumChainEndings.push(secondToLast);
-				}
-			}
-
-			for (const last of reproductionCapableSumChainEndings) {
-				newReproducingSumChainEndings.push([last, 1]);
-			}
-
-			if (index > 2) {
-				// the 1 + 1 sum chain created on the first iteration is not able to reproduce
-				newReproducingSumChainEndings.push([index - 1, 1]);
-			}
-
-			reproducingSumChainEndings = newReproducingSumChainEndings;
-			reproductionCapableSumChainEndings = newReproductionCapableSumChainEndings;
+			// +1 for the new chain '<index-1> + 1'
+			currentWayCount += 1 + this.#calculateAdditionalWaysForNPlusOneTails(index, data - index - 1);
 		}
 
-		return currentWayCount + additionalPrecalculatedWaysCount;
+		return currentWayCount;
 	}
 
 	#calculateAdditionalWaysForNPlusOneTails(n: number, remainingIterations: number): number {
