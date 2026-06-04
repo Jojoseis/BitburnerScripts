@@ -179,41 +179,30 @@ export default class ContractSolver implements ContractSolvers {
 		 * 	- then update the sum chain endings that match case 1. or 2. for the next generation
 		 */
 
-		const validNumbers: Array<boolean> = [];
+		const validNumbers: Array<boolean> = [false]; // 0 is not a valid tail end
 		const cache: Array<Array<number>> = [];
-		for (let i = 0; i < data; i++) {
-			cache.push([]);
-			validNumbers.push(true);
+		for (let i = 1; i <= data; i++) {
+			cache[i] = [];
+			validNumbers[i] = true;
 		}
 
-		let currentWayCount = 1; // for 1+1+1+... sum chain
-		for (let index = 2; index < data; index++) {
-			currentWayCount += 1 + this.#calculateAdditionalWaysForNPlusOneTails(index - 1, data - index, validNumbers, cache);
-		}
-		return currentWayCount;
+		return this.#calculateAdditionalWaysForNPlusOneTails(data, data, validNumbers, cache);
 	}
 
 	#calculateAdditionalWaysForNPlusOneTails(n: number, iterations: number, validNumbers: Array<boolean>, cache: Array<Array<number>>): number {
 		if (cache[n][iterations] === undefined) {
-			// ... n + 1, ... n + n + 1
-			let additionalWays = iterations - Math.floor(iterations / n);
+			let additionalWays = 0;
 
-			let remainingIterations = iterations;
-			let i = 0;
-			while (remainingIterations > 0) {
-				if (i === n) {
-					i = 0; // ... + n
+			for (let tailSum = 1; tailSum <= iterations; tailSum++) {
+				const tailEnd = tailSum % n;
+				if (validNumbers[tailEnd]) {
+					additionalWays += 1 + this.#calculateAdditionalWaysForNPlusOneTails(tailEnd, iterations - tailSum, validNumbers, cache);
 				}
-				if (i > 1 && validNumbers[i]) {
-					additionalWays += this.#calculateAdditionalWaysForNPlusOneTails(i, remainingIterations, validNumbers, cache);
-				}
-				remainingIterations--;
-				i++;
 			}
 
 			cache[n][iterations] = additionalWays;
 		}
-
+		// console.log(`R: ${cache[n][iterations]} for n = ${n} & i = ${iterations}`);
 		return cache[n][iterations];
 	}
 
