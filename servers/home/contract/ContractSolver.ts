@@ -219,6 +219,8 @@ export default class ContractSolver implements ContractSolvers {
 
 	public "Total Ways to Sum II"(data: [number, Array<number>]): number {
 		throw new UnimplementedSolutionError();
+
+		/**
 		const [value, numbers] = data;
 
 		const validNumbers: Array<boolean> = [];
@@ -235,6 +237,7 @@ export default class ContractSolver implements ContractSolvers {
 			}
 		}
 		return currentWayCount;
+		 */
 	}
 
 	public "Spiralize Matrix"(data: Array<Array<number>>): Array<number> {
@@ -470,7 +473,30 @@ export default class ContractSolver implements ContractSolvers {
 	}
 
 	public "Compression I: RLE Compression"(data: string): string {
-		throw new UnimplementedSolutionError();
+		const chars = data.split("");
+
+		if (chars.length === 0) {
+			return "";
+		}
+
+		const MAX_RUN_LENGTH = 9;
+
+		let result = "";
+
+		let currentChar = chars[0];
+		let currentCharCount = 0;
+		for (const char of chars) {
+			if (char !== currentChar || currentCharCount === MAX_RUN_LENGTH) {
+				result += `${currentCharCount}${currentChar}`;
+				currentCharCount = 0;
+			}
+			currentChar = char;
+			currentCharCount++;
+		}
+
+		result += `${currentCharCount}${currentChar}`;
+
+		return result;
 	}
 
 	public "Compression II: LZ Decompression"(data: string): string {
